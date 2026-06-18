@@ -218,7 +218,7 @@ const JUGADORES = [
 ];
 
 const JORNADAS = [
-  { id:"J1",  campo:"Montealvar Golf",            fecha:"18/06/2026", iso:"2026-06-18", cr_h:68.7, slope_h:125, cr_m:70.7, slope_m:130, par:72 },
+  { id:"J1",  campo:"Montealvar Golf",            fecha:"18/06/2026", iso:"2026-06-18", cr_h:68.7, slope_h:125, cr_m:70.7, slope_m:130, par:72, pdf:"Clasificacion_J1_DEFINITIVA.pdf" },
   { id:"J2",  campo:"Club de Golf La Dehesa",     fecha:"25/06/2026", iso:"2026-06-25", cr_h:71.3, slope_h:140, cr_m:66.8, slope_m:117, par:72 },
   { id:"J3",  campo:"El Robledal Golf",           fecha:"02/07/2026", iso:"2026-07-02" },
   { id:"J4",  campo:"Centro Nacional de Golf",    fecha:"09/07/2026", iso:"2026-07-09" },
@@ -433,6 +433,12 @@ function render() {
       <button class="toggle-btn${resTipo==='stableford'?' active':''}" onclick="setResTipo('stableford')">Stableford Hándicap</button>
       <button class="toggle-btn${resTipo==='scratch'?' active':''}" onclick="setResTipo('scratch')">Stableford Scratch</button>
     </div>`;
+    if(resVista!=="general") {
+      const jPdf=JORNADAS.find(j=>j.id===resVista);
+      if(jPdf && jPdf.pdf) {
+        html+=`<a href="${jPdf.pdf}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin:10px 0 4px;padding:9px 14px;background:#1B4332;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">📄 Descargar PDF oficial de la jornada</a>`;
+      }
+    }
     if(resVista==="general") {
       const clas=calcClasificacion(resTipo);
       if(clas.length===0) {
