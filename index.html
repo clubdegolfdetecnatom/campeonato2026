@@ -433,14 +433,13 @@ function render() {
       <button class="toggle-btn${resTipo==='stableford'?' active':''}" onclick="setResTipo('stableford')">Stableford Hándicap</button>
       <button class="toggle-btn${resTipo==='scratch'?' active':''}" onclick="setResTipo('scratch')">Stableford Scratch</button>
     </div>`;
-    if(resVista!=="general") {
-      const jPdf=JORNADAS.find(j=>j.id===resVista);
-      if(jPdf && jPdf.pdf) {
-        html+=`<a href="${jPdf.pdf}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin:10px 0 4px;padding:9px 14px;background:#1B4332;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">📄 Descargar PDF oficial de la jornada</a>`;
-      }
-    }
     if(resVista==="general") {
       const clas=calcClasificacion(resTipo);
+      const jornadasConPdf=JORNADAS.filter(j=>j.pdf && resultados.some(r=>r.jornada===j.id));
+      const ultimoPdf=jornadasConPdf.length?jornadasConPdf[jornadasConPdf.length-1]:null;
+      if(ultimoPdf) {
+        html+=`<a href="${ultimoPdf.pdf}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin:10px 0 4px;padding:9px 14px;background:#1B4332;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">📄 Descargar PDF oficial de clasificación</a>`;
+      }
       if(clas.length===0) {
         html+=`<div class="card"><div class="empty-state"><div style="font-size:32px;margin-bottom:8px">⛳</div>
           <div style="font-size:14px;font-weight:600;">Aún no hay resultados publicados</div>
