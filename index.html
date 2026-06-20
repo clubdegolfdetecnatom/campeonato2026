@@ -356,6 +356,37 @@ function resultadosJornada(jid, tipo) {
 }
 
 // ═══════════════════════════════════════════════
+// EXPORTAR BACKUP COMPLETO (todas las jornadas + resultados)
+// ═══════════════════════════════════════════════
+function exportarBackupCompleto() {
+  if(inscripciones.length===0 && resultados.length===0){
+    showToast("No hay datos que exportar","warn"); return;
+  }
+  const wb=XLSX.utils.book_new();
+
+  // Hoja 1: Inscripciones (todas las jornadas)
+  const datosInsc = inscripciones.map(i=>({
+    'Jornada': i.jornada, 'Jugador': i.jugador
+  })).sort((a,b)=> a.Jornada.localeCompare(b.Jornada) || a.Jugador.localeCompare(b.Jugador,'es'));
+  const wsInsc=XLSX.utils.json_to_sheet(datosInsc);
+  wsInsc['!cols']=[{wch:10},{wch:32}];
+  XLSX.utils.book_append_sheet(wb,wsInsc,"Inscripciones");
+
+  // Hoja 2: Resultados (todas las jornadas)
+  const datosRes = resultados.map(r=>({
+    'Jornada': r.jornada, 'Jugador': r.jugador,
+    'Stableford': r.stableford, 'Scratch': r.scratch
+  })).sort((a,b)=> a.Jornada.localeCompare(b.Jornada) || a.Jugador.localeCompare(b.Jugador,'es'));
+  const wsRes=XLSX.utils.json_to_sheet(datosRes);
+  wsRes['!cols']=[{wch:10},{wch:32},{wch:12},{wch:10}];
+  XLSX.utils.book_append_sheet(wb,wsRes,"Resultados");
+
+  const fecha = new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb,`Backup_Campeonato_${fecha}.xlsx`);
+  showToast("Backup completo descargado ✓");
+}
+
+// ═══════════════════════════════════════════════
 // EXPORTAR EXCEL
 // ═══════════════════════════════════════════════
 function exportarExcel(jid) {
@@ -555,9 +586,14 @@ function render() {
       </div>`;
       return;
     }
-    let html=`<div style="margin-bottom:16px;">
-      <div style="font-size:13px;font-weight:700;color:#1B4332;margin-bottom:4px;">📋 Administración — Gestión por Jornada</div>
-      <div style="font-size:11px;color:#aaa;">Listado de inscritos · Exportar Excel</div>
+    let html=`<div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#1B4332;margin-bottom:4px;">📋 Administración — Gestión por Jornada</div>
+        <div style="font-size:11px;color:#aaa;">Listado de inscritos · Exportar Excel</div>
+      </div>
+      <button class="adm-btn adm-btn-excel" onclick="exportarBackupCompleto()" style="background:#1B4332;color:#fff;border-color:#1B4332;">
+        💾 Exportar TODO (backup)
+      </button>
     </div>`;
     JORNADAS.forEach(j=>{
       const lista=inscritos(j.id).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es')); const jornadaData=j;
