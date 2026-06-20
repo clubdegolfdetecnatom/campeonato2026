@@ -175,6 +175,7 @@
 // SUPABASE CONFIG
 // ═══════════════════════════════════════════════
 const SB_URL = "https://peztstoiswhmlmpyhefl.supabase.co/rest/v1";
+const SB_STORAGE_URL = "https://peztstoiswhmlmpyhefl.supabase.co/storage/v1/object/public/resultados";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBlenRzdG9pc3dobWxtcHloZWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1Mzk5MTMsImV4cCI6MjA5NzExNTkxM30.D-e9iyp8tXU_mQ8Jd7fx3qL36cyW6hOdJF7hSIAnxqU";
 const SB_HEADERS = { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "application/json", "Prefer": "return=minimal" };
 
@@ -218,7 +219,7 @@ const JUGADORES = [
 ];
 
 const JORNADAS = [
-  { id:"J1",  campo:"Montealvar Golf",            fecha:"18/06/2026", iso:"2026-06-18", cr_h:68.7, slope_h:125, cr_m:70.7, slope_m:130, par:72, pdf:"Clasificacion_J1_DEFINITIVA.pdf" },
+  { id:"J1",  campo:"Montealvar Golf",            fecha:"18/06/2026", iso:"2026-06-18", cr_h:68.7, slope_h:125, cr_m:70.7, slope_m:130, par:72 },
   { id:"J2",  campo:"Club de Golf La Dehesa",     fecha:"25/06/2026", iso:"2026-06-25", cr_h:71.3, slope_h:140, cr_m:66.8, slope_m:117, par:72 },
   { id:"J3",  campo:"El Robledal Golf",           fecha:"02/07/2026", iso:"2026-07-02" },
   { id:"J4",  campo:"Centro Nacional de Golf",    fecha:"09/07/2026", iso:"2026-07-09" },
@@ -435,10 +436,11 @@ function render() {
     </div>`;
     if(resVista==="general") {
       const clas=calcClasificacion(resTipo);
-      const jornadasConPdf=JORNADAS.filter(j=>j.pdf && resultados.some(r=>r.jornada===j.id));
-      const ultimoPdf=jornadasConPdf.length?jornadasConPdf[jornadasConPdf.length-1]:null;
-      if(ultimoPdf) {
-        html+=`<a href="${ultimoPdf.pdf}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin:10px 0 4px;padding:9px 14px;background:#1B4332;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">📄 Descargar PDF oficial de clasificación</a>`;
+      const jornadasConRes2=[...new Set(resultados.map(r=>r.jornada))].map(id=>JORNADAS.find(j=>j.id===id)).filter(Boolean);
+      const ultimaJornadaConRes=jornadasConRes2.length?jornadasConRes2[jornadasConRes2.length-1]:null;
+      if(ultimaJornadaConRes) {
+        const pdfUrl=`${SB_STORAGE_URL}/Clasificacion_${ultimaJornadaConRes.id}.pdf`;
+        html+=`<a href="${pdfUrl}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin:10px 0 4px;padding:9px 14px;background:#1B4332;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">📄 Descargar PDF oficial de clasificación</a>`;
       }
       if(clas.length===0) {
         html+=`<div class="card"><div class="empty-state"><div style="font-size:32px;margin-bottom:8px">⛳</div>
