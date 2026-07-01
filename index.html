@@ -703,6 +703,18 @@ function render() {
 
 // Arrancar
 cargarDatos();
+
+// Refresco automático de inscripciones cada 30 segundos
+// para que todos los usuarios vean altas y bajas en tiempo real
+setInterval(async () => {
+  try {
+    const nuevas = await sbGet("inscripciones", "select=jugador,jornada");
+    inscripciones = nuevas;
+    render();
+  } catch(e) {
+    // Silencioso — no interrumpir al usuario si falla el refresco
+  }
+}, 30000);
 </script>
 </body>
 </html>
