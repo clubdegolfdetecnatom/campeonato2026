@@ -205,24 +205,24 @@ async function sbDelete(table, params) {
 const JUGADORES = [
   { nombre:"Pablo López de Sillanes Asenjo",  hcp:19.4, sexo:"H", licencia:"CM81694407" },
   { nombre:"Juan María Moreno Mellado",  hcp:36.0, sexo:"H", licencia:"CMA8821144" },
-  { nombre:"Diego Molpeceres Prieto",        hcp:30.4, sexo:"H", licencia:"CMA8959266" },
+  { nombre:"Diego Molpeceres Prieto",        hcp:29.5, sexo:"H", licencia:"CMA8959266" },
   { nombre:"Miguel Ángel Fernández Sanz",  hcp:24.4, sexo:"H", licencia:"CM00156189" },
-  { nombre:"Pablo Teófilo León López",           hcp:29.9, sexo:"H", licencia:"CM81676084" },
+  { nombre:"Pablo Teófilo León López",           hcp:31.1, sexo:"H", licencia:"CM81676084" },
   { nombre:"Francisco Javier Guerra Saiz",      hcp:13.7, sexo:"H", licencia:"CM11755208" },
   { nombre:"Jose Luis Delgado Criado",       hcp:22.7, sexo:"H", licencia:"CM00071132" },
   { nombre:"José García Aycart",          hcp:36.0, sexo:"H", licencia:"CM00501750" },
   { nombre:"Miguel Ángel Guillén Sáez",    hcp:23.5, sexo:"H", licencia:"CMB4138532" },
-  { nombre:"Juan Bros Torras",               hcp:24.1, sexo:"H", licencia:"CM60100758" },
+  { nombre:"Juan Bros Torras",               hcp:24.4, sexo:"H", licencia:"CM60100758" },
   { nombre:"José Emeterio Gutiérrez Elso", hcp:36.0, sexo:"H", licencia:"7752449132" },
-  { nombre:"Miguel Ángel Guerra Román",     hcp:19.4, sexo:"H", licencia:"AM00970558" },
+  { nombre:"Miguel Ángel Guerra Román",     hcp:20.0, sexo:"H", licencia:"AM00970558" },
   { nombre:"Francisco Sánchez Álvarez",       hcp:29.3, sexo:"H", licencia:"CM00295236" },
   { nombre:"Agustín Tejedor Velarde",         hcp:20.3, sexo:"H", licencia:"CM11187676" },
   { nombre:"Fernando Ortega Pascual",         hcp:10.0, sexo:"H", licencia:"CM11147432" },
   { nombre:"Tomás Adrián Recio Miranda",             hcp:29.8, sexo:"H", licencia:"CMA8957630" },
   { nombre:"Carmen Muñoz Muñoz",           hcp:36.0, sexo:"M", licencia:"CMA8494289" },
-  { nombre:"Gloria Dolado Hernando",           hcp:27.7, sexo:"M", licencia:"CM11503196" },
+  { nombre:"Gloria Dolado Hernando",           hcp:27.2, sexo:"M", licencia:"CM11503196" },
   { nombre:"Juan de la Cruz Martínez Robustillo", hcp:34.9, sexo:"H", licencia:"CM15473475" },
-  { nombre:"Fernando Diaz Marroquín",          hcp:28.7, sexo:"H", licencia:"CM07152606" },
+  { nombre:"Fernando Diaz Marroquín",          hcp:29.5, sexo:"H", licencia:"CM07152606" },
   { nombre:"Javier Antona Arias",              hcp:31.0, sexo:"H", licencia:"AM91053704" },
   { nombre:"Manuel Cabañas Menendez",          hcp:36.0, sexo:"H", licencia:"CM41622023" },
 ];
@@ -282,7 +282,7 @@ function initials(n)   { const p=n.split(' '); return p.length>=2?(p[0][0]+p[1][
 function estaApuntado(jug, jid) { return inscripciones.some(i=>i.jugador===jug && i.jornada===jid); }
 function inscritos(jid)         { return JUGADORES.filter(j=>estaApuntado(j.nombre,jid)).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es')); }
 function hcpJuego(jugador, jornada) {
-  if (!jornada || !jornada.cr_h) return Math.min(jugador.hcp, 36.0).toFixed(1) + ' *';
+  if (!jornada || !jornada.cr_h) return '—';
   const h = Math.min(jugador.hcp, 36.0);
   const cr    = jugador.sexo === 'M' ? jornada.cr_m    : jornada.cr_h;
   const slope = jugador.sexo === 'M' ? jornada.slope_m : jornada.slope_h;
