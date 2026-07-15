@@ -406,7 +406,7 @@ function exportarExcel(jid) {
   if(lista.length===0){ showToast("Sin inscritos en "+jid,"warn"); return; }
   const datos=lista.map((j,i)=>({
     'Nº': i+1, 'Nombre': j.nombre, 'Licencia': j.licencia||'—',
-    'HCP Exacto': Math.min(j.hcp,36).toFixed(1),
+    'HCP Exacto': (jornada && jornada.cr_h) ? Math.min(j.hcp,36).toFixed(1) : '—',
     'HCP Juego': hcpJuego(j, jornada), 'Tees': j.sexo==='M'?'Rojas':'Amarillas',
   }));
   const wb=XLSX.utils.book_new();
@@ -679,7 +679,7 @@ function render() {
             <td style="color:#aaa;font-size:11px;">${idx+1}</td>
             <td style="font-weight:500;">${jug.nombre}</td>
             <td style="font-size:11px;color:#666;">${jug.licencia||'—'}</td>
-            <td><span class="adm-hcp">${Math.min(jug.hcp,36).toFixed(1)}</span></td>
+            <td><span class="adm-hcp">${jornadaData && jornadaData.cr_h ? Math.min(jug.hcp,36).toFixed(1) : '—'}</span></td>
             <td><span class="adm-hcp">${hcpJuego(jug, jornadaData)}</span></td>
             <td style="font-size:11px;font-weight:600;color:${jug.sexo==='M'?'#1D4ED8':'#92400E'}">${jug.sexo==='M'?'🔴 Rojas':'🟡 Amarillas'}</td>
           </tr>`;
