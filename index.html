@@ -205,20 +205,20 @@ async function sbDelete(table, params) {
 const JUGADORES = [
   { nombre:"Pablo López de Sillanes Asenjo",  hcp:20.2, sexo:"H", licencia:"CM81694407" },
   { nombre:"Juan María Moreno Mellado",  hcp:36.0, sexo:"H", licencia:"CMA8821144" },
-  { nombre:"Diego Molpeceres Prieto",        hcp:29.1, sexo:"H", licencia:"CMA8959266" },
-  { nombre:"Miguel Ángel Fernández Sanz",  hcp:24.9, sexo:"H", licencia:"CM00156189" },
+  { nombre:"Diego Molpeceres Prieto",        hcp:29.5, sexo:"H", licencia:"CMA8959266" },
+  { nombre:"Miguel Ángel Fernández Sanz",  hcp:25.4, sexo:"H", licencia:"CM00156189" },
   { nombre:"Pablo Teófilo León López",           hcp:32.2, sexo:"H", licencia:"CM81676084" },
-  { nombre:"Francisco Javier Guerra Saiz",      hcp:14.5, sexo:"H", licencia:"CM11755208" },
-  { nombre:"Jose Luis Delgado Criado",       hcp:21.1, sexo:"H", licencia:"CM00071132" },
+  { nombre:"Francisco Javier Guerra Saiz",      hcp:13.8, sexo:"H", licencia:"CM11755208" },
+  { nombre:"Jose Luis Delgado Criado",       hcp:22.1, sexo:"H", licencia:"CM00071132" },
   { nombre:"José García Aycart",          hcp:36.0, sexo:"H", licencia:"CM00501750" },
-  { nombre:"Miguel Ángel Guillén Sáez",    hcp:23.4, sexo:"H", licencia:"CMB4138532" },
-  { nombre:"Juan Bros Torras",               hcp:25.2, sexo:"H", licencia:"CM60100758" },
+  { nombre:"Miguel Ángel Guillén Sáez",    hcp:23.6, sexo:"H", licencia:"CMB4138532" },
+  { nombre:"Juan Bros Torras",               hcp:25.7, sexo:"H", licencia:"CM60100758" },
   { nombre:"José Emeterio Gutiérrez Elso", hcp:36.0, sexo:"H", licencia:"7752449132" },
   { nombre:"Miguel Ángel Guerra Román",     hcp:19.6, sexo:"H", licencia:"AM00970558" },
-  { nombre:"Francisco Sánchez Álvarez",       hcp:28.9, sexo:"H", licencia:"CM00295236" },
+  { nombre:"Francisco Sánchez Álvarez",       hcp:29.1, sexo:"H", licencia:"CM00295236" },
   { nombre:"Agustín Tejedor Velarde",         hcp:20.2, sexo:"H", licencia:"CM11187676" },
   { nombre:"Fernando Ortega Pascual",         hcp:9.8, sexo:"H", licencia:"CM11147432" },
-  { nombre:"Tomás Adrián Recio Miranda",             hcp:30.4, sexo:"H", licencia:"CMA8957630" },
+  { nombre:"Tomás Adrián Recio Miranda",             hcp:29.8, sexo:"H", licencia:"CMA8957630" },
   { nombre:"Carmen Muñoz Muñoz",           hcp:36.0, sexo:"M", licencia:"CMA8494289" },
   { nombre:"Gloria Dolado Hernando",           hcp:27.2, sexo:"M", licencia:"CM11503196" },
   { nombre:"Juan de la Cruz Martínez Robustillo", hcp:34.9, sexo:"H", licencia:"CM15473475" },
@@ -237,7 +237,14 @@ const JORNADAS = [
   { id:"J7",  campo:"Cabanillas Casa de Campo",   fecha:"28/07/2026", iso:"2026-07-28", cr_h:70.5, slope_h:143, cr_m:70.8, slope_m:137, par:72 },
   { id:"J8",  campo:"El Encin Golf",              fecha:"03/09/2026", iso:"2026-09-03", cr_h:71.7, slope_h:131, cr_m:71.7, slope_m:125, par:72 },
   { id:"J9",  campo:"Montealvar Golf",            fecha:"10/09/2026", iso:"2026-09-10", cr_h:68.7, slope_h:125, cr_m:70.7, slope_m:130, par:72 },
-  { id:"J10", campo:"Golf Olivar de la Hinojosa", fecha:"17/09/2026", iso:"2026-09-17", cr_h:71.2, slope_h:133, cr_m:70.8, slope_m:118, par:72 },
+  { id:"J10", campo:"Golf Olivar de la Hinojosa", fecha:"17/09/2026", iso:"2026-09-17" },
+];
+
+// Eventos de temporada distintos de la Liga (Ryder Cup, Clausura, ...).
+// Independientes de JORNADAS/resultados — se inscriben en la tabla aparte inscripciones_eventos.
+const EVENTOS = [
+  { id:"ryder",    nombre:"Ryder Cup: Jubilados vs No Jubilados", fecha:"24/09/2026", sede:"Retamares (pendiente de confirmar)", formato:"Fourball", comentario:false },
+  { id:"clausura", nombre:"Campeonato de Clausura",                fecha:"10–11/10/2026", sede:"Sede por determinar", formato:"Doble jornada", comentario:true },
 ];
 
 const MEDALS = ["🥇","🥈","🥉"];
@@ -246,6 +253,8 @@ const ADM_PWD = "Tecnatom";
 let inscripciones = []; // [{jugador, jornada}]
 let resultados    = []; // [{jornada, jugador, stableford, scratch}]
 let cuotas         = []; // [{jugador, pagado}]
+let inscripcionesEventos = []; // [{jugador, evento, comentario}]
+let eventoFormAbierto = null; // id del evento cuyo formulario de comentario está abierto
 let jugadorActual = localStorage.getItem("tecnatom_jugador") || "";
 let tabActual     = "inscripcion";
 let jornadaDetalle= null;
@@ -258,10 +267,11 @@ let admAuth       = false;
 // ═══════════════════════════════════════════════
 async function cargarDatos() {
   try {
-    [inscripciones, resultados, cuotas] = await Promise.all([
+    [inscripciones, resultados, cuotas, inscripcionesEventos] = await Promise.all([
       sbGet("inscripciones", "select=jugador,jornada"),
       sbGet("resultados",    "select=jornada,jugador,stableford,scratch"),
-      sbGet("cuotas",        "select=jugador,pagado")
+      sbGet("cuotas",        "select=jugador,pagado"),
+      sbGet("inscripciones_eventos", "select=jugador,evento,comentario")
     ]);
     render();
   } catch(e) {
@@ -281,6 +291,9 @@ function isFuture(iso) { return new Date(iso) >= new Date(new Date().toDateStrin
 function initials(n)   { const p=n.split(' '); return p.length>=2?(p[0][0]+p[1][0]).toUpperCase():n[0].toUpperCase(); }
 function estaApuntado(jug, jid) { return inscripciones.some(i=>i.jugador===jug && i.jornada===jid); }
 function inscritos(jid)         { return JUGADORES.filter(j=>estaApuntado(j.nombre,jid)).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es')); }
+function estaApuntadoEvento(jug, eid) { return inscripcionesEventos.some(i=>i.jugador===jug && i.evento===eid); }
+function comentarioEvento(jug, eid)   { const i=inscripcionesEventos.find(x=>x.jugador===jug && x.evento===eid); return i?i.comentario:null; }
+function inscritosEvento(eid)         { return JUGADORES.filter(j=>estaApuntadoEvento(j.nombre,eid)).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es')); }
 function hcpJuego(jugador, jornada) {
   if (!jornada || !jornada.cr_h) return '—';
   const h = Math.min(jugador.hcp, 36.0);
@@ -332,6 +345,30 @@ async function toggleInscripcion(jid) {
       inscripciones.push({jugador: jugadorActual, jornada: jid});
       showToast(`Apuntado a ${jid} ✓`);
     }
+    render();
+  } catch(e) {
+    showToast("Error: "+e.message,"warn");
+  }
+}
+
+function abrirFormEvento(eid) { eventoFormAbierto=eid; render(); }
+
+async function toggleInscripcionEvento(eid, comentarioInputId) {
+  if(!jugadorActual){ showToast("Primero selecciona tu nombre","warn"); return; }
+  const apuntado = estaApuntadoEvento(jugadorActual, eid);
+  showToast(apuntado?"Procesando baja...":"Procesando inscripción...","info");
+  try {
+    if(apuntado) {
+      await sbDelete("inscripciones_eventos", `jugador=eq.${encodeURIComponent(jugadorActual)}&evento=eq.${eid}`);
+      inscripcionesEventos = inscripcionesEventos.filter(i=>!(i.jugador===jugadorActual && i.evento===eid));
+      showToast(`Baja confirmada ✓`);
+    } else {
+      const comentario = comentarioInputId ? (document.getElementById(comentarioInputId)?.value.trim() || null) : null;
+      await sbPost("inscripciones_eventos", {jugador: jugadorActual, evento: eid, comentario});
+      inscripcionesEventos.push({jugador: jugadorActual, evento: eid, comentario});
+      showToast(`Apuntado ✓`);
+    }
+    eventoFormAbierto = null;
     render();
   } catch(e) {
     showToast("Error: "+e.message,"warn");
@@ -485,6 +522,44 @@ function render() {
         ${ap?`<div class="ya-apuntado">✓ Estás apuntado</div>`:''}
       </div>`;
     });
+
+    // ── Otros eventos de la temporada (Ryder Cup, Clausura...) ──
+    html+=`<div style="margin:22px 0 10px;font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:1px;">Otros eventos de la temporada</div>`;
+    EVENTOS.forEach(ev=>{
+      const ap=jugadorActual&&estaApuntadoEvento(jugadorActual,ev.id);
+      const total=inscritosEvento(ev.id).length;
+      const mostrandoForm=eventoFormAbierto===ev.id && !ap;
+      let boton;
+      if(ap) {
+        boton=`<button class="btn-inscribir btn-baja" onclick="toggleInscripcionEvento('${ev.id}')">Baja</button>`;
+      } else if(ev.comentario && !mostrandoForm) {
+        boton=`<button class="btn-inscribir btn-apuntar" onclick="abrirFormEvento('${ev.id}')">Apuntarme</button>`;
+      } else if(!ev.comentario) {
+        boton=`<button class="btn-inscribir btn-apuntar" onclick="toggleInscripcionEvento('${ev.id}')">Apuntarme</button>`;
+      } else {
+        boton='';
+      }
+      const miComentario=ap?comentarioEvento(jugadorActual,ev.id):null;
+      html+=`<div class="jornada-card${ap?' apuntado':''}">
+        <div class="jornada-row">
+          <div class="jornada-left">
+            <div class="jornada-badge ${ap?'badge-apuntado':'badge-future'}">${ev.id==='ryder'?'🏆':'🎉'}</div>
+            <div><div class="jornada-campo">${ev.nombre}</div>
+            <div class="jornada-meta">${ev.fecha} · ${ev.sede} · ${ev.formato}
+              ${total>0?`<span class="meta-inscritos" onclick="toggleDetalle('${ev.id}')">${total} apuntado${total>1?'s':''} ▾</span>`:''}
+            </div></div>
+          </div>
+          ${boton}
+        </div>
+        ${mostrandoForm?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f0;">
+          <input type="text" id="comentario-${ev.id}" placeholder="Comentario opcional: voy con acompañante, juego solo un día..." style="width:100%;padding:8px 10px;font-size:12px;border:1.5px solid #e0e0e0;border-radius:8px;margin-bottom:8px;box-sizing:border-box;"/>
+          <button class="btn-inscribir btn-apuntar" onclick="toggleInscripcionEvento('${ev.id}','comentario-${ev.id}')">Confirmar inscripción</button>
+        </div>`:''}
+        ${jornadaDetalle===ev.id&&total>0?`<div class="inscritos-list">${inscritosEvento(ev.id).map(ins=>`<span class="pill ${ins.sexo==='M'?'pill-m':'pill-h'}">${ins.nombre}</span>`).join('')}</div>`:''}
+        ${ap?`<div class="ya-apuntado">✓ Estás apuntado${miComentario?` · "${miComentario}"`:''}</div>`:''}
+      </div>`;
+    });
+
     c.innerHTML=html;
 
   // ── RESULTADOS ───────────────────────────────
@@ -655,6 +730,36 @@ function render() {
     });
     html+=`</tbody></table></div>`;
 
+    // ── Otros eventos de la temporada (Ryder Cup, Clausura) ──
+    EVENTOS.forEach(ev=>{
+      const lista=inscritosEvento(ev.id);
+      html+=`<div class="adm-jornada" style="margin-bottom:20px;">
+        <div class="adm-jornada-hdr">
+          <div>
+            <div class="adm-jornada-title">${ev.id==='ryder'?'🏆':'🎉'} ${ev.nombre}</div>
+            <div class="adm-jornada-meta">${ev.fecha} · ${ev.sede}</div>
+          </div>
+          <div class="adm-badge">${lista.length} apuntado${lista.length!==1?'s':''}</div>
+        </div>`;
+      if(lista.length===0) {
+        html+=`<div class="adm-empty">Sin inscritos</div>`;
+      } else {
+        html+=`<table class="adm-table"><thead><tr>
+          <th>#</th><th>Jugador</th>${ev.comentario?'<th>Comentario</th>':''}
+        </tr></thead><tbody>`;
+        lista.forEach((jug,idx)=>{
+          const com=comentarioEvento(jug.nombre,ev.id);
+          html+=`<tr>
+            <td style="color:#aaa;font-size:11px;">${idx+1}</td>
+            <td style="font-weight:500;">${jug.nombre}</td>
+            ${ev.comentario?`<td style="font-size:12px;color:#666;">${com||'—'}</td>`:''}
+          </tr>`;
+        });
+        html+=`</tbody></table>`;
+      }
+      html+=`</div>`;
+    });
+
     JORNADAS.forEach(j=>{
       const lista=inscritos(j.id).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es')); const jornadaData=j;
       const pasada=!isFuture(j.iso);
@@ -709,8 +814,12 @@ cargarDatos();
 // para que todos los usuarios vean altas y bajas en tiempo real
 setInterval(async () => {
   try {
-    const nuevas = await sbGet("inscripciones", "select=jugador,jornada");
+    const [nuevas, nuevasEventos] = await Promise.all([
+      sbGet("inscripciones", "select=jugador,jornada"),
+      sbGet("inscripciones_eventos", "select=jugador,evento,comentario")
+    ]);
     inscripciones = nuevas;
+    inscripcionesEventos = nuevasEventos;
     render();
   } catch(e) {
     // Silencioso — no interrumpir al usuario si falla el refresco
