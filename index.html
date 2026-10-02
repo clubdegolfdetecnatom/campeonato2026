@@ -61,6 +61,16 @@
     .pill-h { background: #F0F7F4; color: #1B4332; }
     .pill-m { background: #EFF6FF; color: #1D4ED8; }
     .ya-apuntado { margin-top: 5px; font-size: 10px; color: #1B4332; font-weight: 600; }
+    .comp-row { display: flex; background: white; border-radius: 10px; padding: 4px;
+      margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); gap: 4px; }
+    .comp-btn { flex: 1; padding: 10px 8px; font-size: 12.5px; font-weight: 700; border: none;
+      border-radius: 7px; background: transparent; color: #888; }
+    .comp-btn.active { background: #1B4332; color: white; }
+    .comp-nuevo { display: inline-block; background: #FDE68A; color: #92400E; font-size: 9px;
+      font-weight: 800; padding: 1px 5px; border-radius: 10px; margin-left: 5px; vertical-align: middle; }
+    .comp-leyenda { background: #F0F7F4; border-left: 3px solid #2D6A4F; padding: 9px 12px;
+      border-radius: 0 8px 8px 0; font-size: 11.5px; margin-bottom: 14px; line-height: 1.5; }
+    .result-desglose { font-size: 11px; color: #aaa; margin-top: 1px; }
     .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
     .filter-btn { padding: 7px 14px; font-size: 12px; font-weight: 600; border-radius: 20px;
       border: none; background: white; color: #555; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
@@ -258,6 +268,12 @@ let eventoFormAbierto = null; // id del evento cuyo formulario de comentario est
 let jugadorActual = localStorage.getItem("tecnatom_jugador") || "";
 let tabActual     = "inscripcion";
 let jornadaDetalle= null;
+const CLAUSURA = [
+  { id:"C1", campo:"Golf Villamayor",  fecha:"10/10/2026", iso:"2026-10-10", cr_h:69.2, slope_h:119, cr_m:69.0, slope_m:120, par:71 },
+  { id:"C2", campo:"Golf Zarapicos",   fecha:"11/10/2026", iso:"2026-10-11", cr_h:69.1, slope_h:136, cr_m:70.2, slope_m:128, par:72 },
+];
+
+let resComp       = "liga";
 let resVista      = "general";
 let resTipo       = "stableford";
 let admAuth       = false;
@@ -322,6 +338,7 @@ function onJugadorChange(v) {
   localStorage.setItem("tecnatom_jugador", v);
   render();
 }
+function setResComp(v) { resComp=v; resVista="general"; render(); }
 function setResVista(v) { resVista=v; render(); }
 function setResTipo(v)  { resTipo=v; render(); }
 function toggleDetalle(jid) { jornadaDetalle=jornadaDetalle===jid?null:jid; render(); }
@@ -390,6 +407,23 @@ function calcClasificacion(tipo) {
     .map(j=>({nombre:j.nombre,hcp:j.hcp,sexo:j.sexo,total:top4(por[j.nombre]),jornadas:por[j.nombre].length}))
     .filter(j=>j.jornadas>0)
     .sort((a,b)=>b.total!==a.total?b.total-a.total:tipo==="stableford"?a.hcp-b.hcp:b.hcp-a.hcp);
+}
+
+function calcClausura(tipo) {
+  const ids = CLAUSURA.map(c=>c.id);
+  return JUGADORES.map(j=>{
+    const p = {};
+    ids.forEach(id=>{
+      const r = resultados.find(x=>x.jugador===j.nombre && x.jornada===id && x[tipo]!=null);
+      if(r) p[id] = r[tipo];
+    });
+    const jugadas = Object.keys(p).length;
+    const total = Object.values(p).reduce((s,v)=>s+v,0);
+    return { nombre:j.nombre, hcp:j.hcp, sexo:j.sexo, parciales:p, jugadas, total };
+  })
+  .filter(j=>j.jugadas>0)
+  .sort((a,b)=> b.total!==a.total ? b.total-a.total
+              : tipo==="stableford" ? a.hcp-b.hcp : b.hcp-a.hcp);
 }
 
 function resultadosJornada(jid, tipo) {
@@ -564,9 +598,82 @@ function render() {
 
   // ── RESULTADOS ───────────────────────────────
   } else if(tabActual==="resultados") {
+    const hayClausura = resultados.some(r=>CLAUSURA.some(c=>c.id===r.jornada));
+    let html=`<div class="comp-row">
+      <button class="comp-btn${resComp==='liga'?' active':''}" onclick="setResComp('liga')">Liga · XXXIV Campeonato</button>
+      <button class="comp-btn${resComp==='clausura'?' active':''}" onclick="setResComp('clausura')">Campeonato de Clausura${hayClausura?'':'<span class="comp-nuevo">PRÓXIMO</span>'}</button>
+    </div>`;
+
+    // ══════════ CAMPEONATO DE CLAUSURA ══════════
+    if(resComp==="clausura") {
+      const conRes = CLAUSURA.filter(c=>resultados.some(r=>r.jornada===c.id));
+      html+=`<div class="filter-row">
+        <button class="filter-btn${resVista==='general'?' active':''}" onclick="setResVista('general')">Clasificación Final</button>
+        ${CLAUSURA.map((c,i)=>`<button class="filter-btn${resVista===c.id?' active':''}" onclick="setResVista('${c.id}')">${i+1}ª · ${c.campo.replace('Golf ','')}</button>`).join('')}
+      </div>
+      <div class="toggle-row">
+        <button class="toggle-btn${resTipo==='stableford'?' active':''}" onclick="setResTipo('stableford')">Stableford Hándicap</button>
+        <button class="toggle-btn${resTipo==='scratch'?' active':''}" onclick="setResTipo('scratch')">Stableford Scratch</button>
+      </div>`;
+
+      if(conRes.length===0) {
+        html+=`<div class="card"><div class="empty-state"><div style="font-size:32px;margin-bottom:8px">🏆</div>
+          <div style="font-size:14px;font-weight:600;">Campeonato de Clausura</div>
+          <div style="font-size:12px;margin-top:4px;">Salamanca · 10 y 11 de octubre de 2026<br>Golf Villamayor y Golf Zarapicos</div>
+          <div style="font-size:12px;margin-top:10px;color:#bbb;">Los resultados aparecerán aquí tras cada jornada</div></div></div>`;
+      } else if(resVista==="general") {
+        const clas=calcClausura(resTipo);
+        const ultima=conRes[conRes.length-1];
+        html+=`<div class="comp-leyenda"><strong>Suma de las dos jornadas.</strong> A diferencia de la Liga, aquí cuentan las dos tarjetas completas, no las mejores. Quien solo dispute una jornada figura con el total de esa única tarjeta.</div>`;
+        html+=`<a href="${SB_STORAGE_URL}/Clasificacion_${ultima.id}.pdf" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin:0 0 10px;padding:9px 14px;background:#1B4332;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">📄 Descargar PDF oficial de clasificación</a>`;
+        html+=`<div class="card"><div class="card-header">
+          <div class="card-title">Clasificación Final — ${resTipo==="stableford"?"Stableford Hándicap":"Stableford Scratch"}</div>
+          <div class="card-sub">Villamayor + Zarapicos · Desempate: ${resTipo==="stableford"?"menor HCP exacto":"mayor HCP exacto"}</div>
+        </div>`;
+        clas.forEach((j,idx)=>{
+          const yo=j.nombre===jugadorActual;
+          const desglose=CLAUSURA.map(c=>`${c.campo.replace('Golf ','')} ${j.parciales[c.id]!=null?j.parciales[c.id]:'—'}`).join(' · ')
+            + (j.jugadas<CLAUSURA.length?' · <span style="color:#92400E;">solo 1 jornada</span>':'');
+          html+=`<div class="result-row${yo?' yo':''}">
+            <div class="pos${idx<3?' medal':''}">${idx<3?MEDALS[idx]:idx+1}</div>
+            ${avatarHTML(j.nombre,j.sexo,false)}
+            <div style="flex:1"><div class="result-name${yo?' yo':''}">${j.nombre}</div>
+            <div class="result-desglose">${desglose}</div></div>
+            <div class="result-pts${idx===0?' winner':''}">${j.total}</div>
+          </div>`;
+        });
+        html+=`</div>`;
+      } else {
+        const c=CLAUSURA.find(x=>x.id===resVista);
+        const lista=resultadosJornada(resVista,resTipo);
+        const orden=CLAUSURA.findIndex(x=>x.id===resVista)+1;
+        html+=`<div class="card"><div class="card-header">
+          <div class="card-title">${orden}ª Jornada · ${c.campo} — ${resTipo==="stableford"?"Stableford Hándicap":"Stableford Scratch"}</div>
+          <div class="card-sub">${c.fecha} · Par ${c.par}</div></div>`;
+        if(lista.length===0) {
+          html+=`<div class="empty-state" style="padding:32px 20px;">Sin datos para esta modalidad</div>`;
+        } else {
+          lista.forEach((r,idx)=>{
+            const yo=r.jugador===jugadorActual;
+            const jug=JUGADORES.find(j=>j.nombre===r.jugador);
+            html+=`<div class="result-row${yo?' yo':''}">
+              <div class="pos${idx<3?' medal':''}">${idx<3?MEDALS[idx]:idx+1}</div>
+              ${avatarHTML(r.jugador,jug?.sexo||'H',false)}
+              <div style="flex:1"><div class="result-name${yo?' yo':''}">${r.jugador}</div>
+              <div class="result-hcp">HCP ${jug?Math.min(jug.hcp,36).toFixed(1):'—'}</div></div>
+              <div class="result-pts${idx===0?' winner':''}">${r[resTipo]}</div>
+            </div>`;
+          });
+        }
+        html+=`</div>`;
+      }
+      c.innerHTML=html; return;
+    }
+
+    // ══════════ LIGA (sin cambios) ══════════
     const jornadasConRes=[...new Set(resultados.map(r=>r.jornada))].map(id=>JORNADAS.find(j=>j.id===id)).filter(Boolean)
       .sort((a,b)=>JORNADAS.indexOf(a)-JORNADAS.indexOf(b));
-    let html=`<div class="filter-row">
+    html+=`<div class="filter-row">
       <button class="filter-btn${resVista==='general'?' active':''}" onclick="setResVista('general')">Clasificación General</button>
       ${jornadasConRes.map(j=>`<button class="filter-btn${resVista===j.id?' active':''}" onclick="setResVista('${j.id}')">${j.id} · ${j.campo.split(' ').slice(0,2).join(' ')}</button>`).join('')}
     </div>
@@ -576,9 +683,7 @@ function render() {
     </div>`;
     if(resVista==="general") {
       const clas=calcClasificacion(resTipo);
-      const jornadasConRes2=[...new Set(resultados.map(r=>r.jornada))].map(id=>JORNADAS.find(j=>j.id===id)).filter(Boolean)
-        .sort((a,b)=>JORNADAS.indexOf(a)-JORNADAS.indexOf(b));
-      const ultimaJornadaConRes=jornadasConRes2.length?jornadasConRes2[jornadasConRes2.length-1]:null;
+      const ultimaJornadaConRes=jornadasConRes.length?jornadasConRes[jornadasConRes.length-1]:null;
       if(ultimaJornadaConRes) {
         const pdfUrl=`${SB_STORAGE_URL}/Clasificacion_${ultimaJornadaConRes.id}.pdf`;
         html+=`<a href="${pdfUrl}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin:10px 0 4px;padding:9px 14px;background:#1B4332;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">📄 Descargar PDF oficial de clasificación</a>`;
