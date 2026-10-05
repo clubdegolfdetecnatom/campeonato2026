@@ -150,7 +150,7 @@
     .fotos-tira.n2 { grid-template-columns: 1fr 1fr; }
     .fotos-tira.n3 { grid-template-columns: 1fr 1fr 1fr; }
     .fotos-tira img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: #e8ece8; cursor: pointer; }
-    .fotos-tira.n1 img { aspect-ratio: 16/9; }
+    .fotos-tira.n1 img { aspect-ratio: auto; height: auto; max-height: 75vh; object-fit: contain; } /* una sola foto: entera, sin recortar a nadie */
     .fotos-pie { display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
       font-size: 11px; color: #999; margin: 0 2px 14px; }
     .fotos-pie a { color: #1B4332; font-weight: 600; text-decoration: none; cursor: pointer; white-space: nowrap; }
