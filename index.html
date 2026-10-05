@@ -143,6 +143,45 @@
     .adm-actions { padding: 12px 18px; display: flex; gap: 10px; flex-wrap: wrap; border-top: 1px solid #f0f0f0; }
     .adm-btn { padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 6px; border: none; }
     .adm-btn-excel { background: #D1FAE5; color: #065F46; }
+    /* FOTOS */
+    .fotos-tira { display: grid; gap: 4px; margin-bottom: 6px; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08); background: white; }
+    .fotos-tira.n1 { grid-template-columns: 1fr; }
+    .fotos-tira.n2 { grid-template-columns: 1fr 1fr; }
+    .fotos-tira.n3 { grid-template-columns: 1fr 1fr 1fr; }
+    .fotos-tira img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: #e8ece8; cursor: pointer; }
+    .fotos-tira.n1 img { aspect-ratio: 16/9; }
+    .fotos-pie { display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+      font-size: 11px; color: #999; margin: 0 2px 14px; }
+    .fotos-pie a { color: #1B4332; font-weight: 600; text-decoration: none; cursor: pointer; white-space: nowrap; }
+    .foto-ev { background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 14px; overflow: hidden; }
+    .foto-ev-cab { padding: 14px 16px 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .foto-ev-nom { font-size: 14px; font-weight: 700; color: #1B4332; }
+    .foto-ev-meta { font-size: 11px; color: #999; margin-top: 2px; }
+    .foto-ev-num { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: #D1FAE5; color: #1B4332; white-space: nowrap; }
+    .foto-ev-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 4px; padding: 0 6px 6px; }
+    .foto-ev-grid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 6px; cursor: pointer; display: block; background: #e8ece8; }
+    .fotos-enlace { display: block; text-align: center; font-size: 12px; font-weight: 600; color: #1B4332; text-decoration: none; padding: 6px 0 2px; }
+    #lb { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.92); z-index: 1000; align-items: center; justify-content: center; }
+    #lb.on { display: flex; }
+    #lb img { max-width: 94vw; max-height: 86vh; border-radius: 6px; }
+    #lb-cerrar { position: absolute; top: 12px; right: 16px; color: white; font-size: 32px; line-height: 1; background: none; border: none; padding: 4px 8px; }
+    #lb-cap { position: absolute; bottom: 16px; left: 12px; right: 12px; text-align: center; color: rgba(255,255,255,.85); font-size: 13px; }
+    .lb-nav { position: absolute; top: 50%; transform: translateY(-50%); color: white; font-size: 44px; background: none; border: none; padding: 8px 14px; user-select: none; }
+    #lb-prev { left: 0; } #lb-next { right: 0; }
+    .foto-form { padding: 14px 18px; }
+    .foto-form label { display: block; font-size: 10px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    #foto-evento { width: 100%; padding: 9px 10px; font-size: 13px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; margin-bottom: 12px; }
+    .foto-pend { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid #f5f5f5; }
+    .foto-pend img { width: 56px; height: 42px; object-fit: cover; border-radius: 5px; background: #e8ece8; flex-shrink: 0; }
+    .foto-pend-info { flex: 1; min-width: 0; }
+    .foto-pend-nom { font-size: 11px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .foto-pend input { width: 100%; margin-top: 3px; padding: 6px 8px; font-size: 12px; border: 1.5px solid #e0e0e0; border-radius: 6px; font-family: inherit; }
+    .foto-pend-est { font-size: 11px; font-weight: 600; margin-top: 3px; }
+    .foto-pend-est.ok { color: #059669; } .foto-pend-est.error { color: #DC2626; } .foto-pend-est.proc { color: #1d4ed8; }
+    .foto-quitar { background: none; border: none; color: #bbb; font-size: 18px; padding: 4px 6px; flex-shrink: 0; }
+    .foto-botones { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .foto-nota { font-size: 11px; color: #aaa; margin-top: 10px; line-height: 1.5; }
     #toast { position: fixed; top: 14px; right: 14px; z-index: 999;
       padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
       color: white; box-shadow: 0 4px 16px rgba(0,0,0,0.2); display: none; }
@@ -172,11 +211,19 @@
       <button class="tab-btn"        onclick="showTab('resultados')">📊 Resultados</button>
       <button class="tab-btn"        onclick="showTab('handicaps')">📈 Hándicaps</button>
       <button class="tab-btn"        onclick="showTab('calendario')">📅 Calendario</button>
+      <button class="tab-btn"        onclick="showTab('fotos')">📷 Fotos</button>
       <button class="tab-btn"        onclick="showTab('administracion')">🔒 Administración</button>
     </div>
   </div>
 </div>
 <div id="toast"></div>
+<div id="lb" onclick="if(event.target===this)lbCerrar()">
+  <button id="lb-cerrar" onclick="lbCerrar()" aria-label="Cerrar">&times;</button>
+  <button class="lb-nav" id="lb-prev" onclick="lbMover(-1)" aria-label="Anterior">&#8249;</button>
+  <img id="lb-img" src="" alt=""/>
+  <button class="lb-nav" id="lb-next" onclick="lbMover(1)" aria-label="Siguiente">&#8250;</button>
+  <div id="lb-cap"></div>
+</div>
 <div id="content"><div class="loading"><span class="spinner"></span>Cargando datos...</div></div>
 <div id="footer">Club de Golf Tecnatom · XXXIV Campeonato 2026</div>
 
@@ -206,6 +253,23 @@ async function sbUpsert(table, data, onConflict) {
 }
 async function sbDelete(table, params) {
   const r = await fetch(`${SB_URL}/${table}?${params}`, { method: "DELETE", headers: SB_HEADERS });
+  if (!r.ok) throw new Error(`${r.status} ${await r.text()}`);
+}
+
+// Fotos: lectura pública de cualquier almacén y subida al almacén "fotos"
+const SB_PUBLIC  = "https://peztstoiswhmlmpyhefl.supabase.co/storage/v1/object/public";
+const SB_SUBIDA  = "https://peztstoiswhmlmpyhefl.supabase.co/storage/v1/object/fotos";
+const GALERIA_URL = "https://clubdegolfdetecnatom.github.io/galeria.html";
+const TEMPORADA  = 2026;
+const CLAUSURA_FOTOS = "clausura-salamanca"; // id del evento en eventos_fotos cuyas fotos acompañan a la clasificación de Clausura
+
+async function sbSubirFoto(ruta, blob) {
+  const r = await fetch(`${SB_SUBIDA}/${ruta}`, {
+    method: "POST",
+    headers: { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "image/jpeg",
+               "x-upsert": "false", "cache-control": "max-age=31536000" },
+    body: blob
+  });
   if (!r.ok) throw new Error(`${r.status} ${await r.text()}`);
 }
 
@@ -278,6 +342,13 @@ let resVista      = "general";
 let resTipo       = "stableford";
 let admAuth       = false;
 
+// Fotos (tablas eventos_fotos y fotos). Se cargan aparte: si fallan, el resto del portal sigue funcionando.
+let eventosFotos  = [];          // [{id, anio, nombre, meta, fecha, jornada, fotos:[{id,bucket,ruta,ruta_mini,pie,orden}]}]
+let fotosEstado   = "cargando";  // cargando | ok | error
+let fotoEvento    = "";          // evento elegido en el formulario de subida
+let fotoPend      = [];          // [{file, prev, pie, estado, msg}] fotos elegidas y aún no publicadas
+let fotoSubiendo  = false;
+
 // ═══════════════════════════════════════════════
 // CARGA INICIAL
 // ═══════════════════════════════════════════════
@@ -290,9 +361,24 @@ async function cargarDatos() {
       sbGet("inscripciones_eventos", "select=jugador,evento,comentario")
     ]);
     render();
+    cargarFotos();
   } catch(e) {
     document.getElementById('content').innerHTML = `<div class="loading" style="color:#DC2626">Error cargando datos: ${e.message}</div>`;
   }
+}
+
+async function cargarFotos() {
+  try {
+    const [evs, fs] = await Promise.all([
+      sbGet("eventos_fotos", `select=id,anio,nombre,meta,fecha,jornada&anio=eq.${TEMPORADA}&order=fecha.desc.nullslast`),
+      sbGet("fotos",         "select=id,evento_id,bucket,ruta,ruta_mini,pie,orden&order=orden.asc,id.asc")
+    ]);
+    eventosFotos = evs.map(e=>({...e, fotos: fs.filter(f=>f.evento_id===e.id)}));
+    fotosEstado = "ok";
+  } catch(e) {
+    fotosEstado = "error";
+  }
+  render();
 }
 
 // ═══════════════════════════════════════════════
@@ -329,7 +415,7 @@ function avatarHTML(nombre, sexo, dark) {
 function showTab(t) {
   tabActual=t;
   document.querySelectorAll('.tab-btn').forEach((b,i)=>{
-    b.classList.toggle('active',['inscripcion','resultados','handicaps','calendario','administracion'][i]===t);
+    b.classList.toggle('active',['inscripcion','resultados','handicaps','calendario','fotos','administracion'][i]===t);
   });
   render();
 }
@@ -390,6 +476,220 @@ async function toggleInscripcionEvento(eid, comentarioInputId) {
   } catch(e) {
     showToast("Error: "+e.message,"warn");
   }
+}
+
+// ═══════════════════════════════════════════════
+// FOTOS
+// ═══════════════════════════════════════════════
+function esc(s) {
+  return String(s==null?'':s).replace(/[&<>"']/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function fotoURL(f, mini) {
+  const ruta = (mini && f.ruta_mini) ? f.ruta_mini : f.ruta;
+  return `${SB_PUBLIC}/${encodeURIComponent(f.bucket)}/${ruta.split('/').map(encodeURIComponent).join('/')}`;
+}
+function eventoFotosPorId(id)     { return eventosFotos.find(e=>e.id===id) || null; }
+function eventoFotosDeJornada(jid) {
+  const n = parseInt(String(jid).replace(/\D/g,''), 10);
+  return eventosFotos.find(e=>e.jornada===n) || null;
+}
+
+// Tira de fotos que acompaña a una clasificación (máximo 3; el resto, en la pestaña Fotos)
+function tiraFotosHTML(ev) {
+  if(!ev || !ev.fotos.length) return '';
+  const visibles = ev.fotos.slice(0,3);
+  const n = visibles.length;
+  let h = `<div class="fotos-tira n${n}">`;
+  visibles.forEach((f,i)=>{
+    h += `<img loading="lazy" src="${esc(fotoURL(f, n>1))}" alt="${esc(f.pie||ev.nombre)}" onclick="lbAbrir('${esc(ev.id)}',${i})"/>`;
+  });
+  h += `</div><div class="fotos-pie"><span>📷 ${esc(visibles[0].pie && n===1 ? visibles[0].pie : ev.nombre)}</span>`
+     + `<a onclick="showTab('fotos')">${ev.fotos.length>n?`Ver las ${ev.fotos.length} fotos`:'Todas las fotos'} ›</a></div>`;
+  return h;
+}
+
+// Visor a pantalla completa. Vive fuera de #content para que los repintados no lo cierren.
+let lbFotos = [], lbPos = 0, lbTitulo = '';
+function lbPintar() {
+  const f = lbFotos[lbPos];
+  document.getElementById('lb-img').src = fotoURL(f, false);
+  document.getElementById('lb-cap').textContent =
+    lbTitulo + (f.pie ? ' · ' + f.pie : '') + (lbFotos.length>1 ? ` (${lbPos+1}/${lbFotos.length})` : '');
+  const varias = lbFotos.length>1 ? '' : 'none';
+  document.getElementById('lb-prev').style.display = varias;
+  document.getElementById('lb-next').style.display = varias;
+}
+function lbAbrir(eventoId, i) {
+  const ev = eventoFotosPorId(eventoId);
+  if(!ev || !ev.fotos[i]) return;
+  lbFotos = ev.fotos.slice(); lbPos = i; lbTitulo = ev.nombre;
+  lbPintar();
+  document.getElementById('lb').classList.add('on');
+}
+function lbCerrar() { document.getElementById('lb').classList.remove('on'); document.getElementById('lb-img').src=''; }
+function lbMover(d) { if(lbFotos.length<2) return; lbPos = (lbPos + d + lbFotos.length) % lbFotos.length; lbPintar(); }
+document.addEventListener('keydown', e=>{
+  if(!document.getElementById('lb').classList.contains('on')) return;
+  if(e.key==='Escape') lbCerrar();
+  if(e.key==='ArrowLeft') lbMover(-1);
+  if(e.key==='ArrowRight') lbMover(1);
+});
+(function(){ // deslizar con el dedo en el móvil
+  let x0 = null;
+  const lb = document.getElementById('lb');
+  lb.addEventListener('touchstart', e=>{ x0 = e.touches[0].clientX; }, {passive:true});
+  lb.addEventListener('touchend', e=>{
+    if(x0===null) return;
+    const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if(Math.abs(dx) > 50) lbMover(dx<0 ? 1 : -1);
+  }, {passive:true});
+})();
+
+// ── Subida de fotos (pestaña Administración) ──
+const FOTO_LADO = 1600, FOTO_LADO_MINI = 640, FOTO_MAX_BYTES = 1900000, FOTO_MAX_TANDA = 12;
+
+function fotoEventoPorDefecto() {
+  const hoy = new Date().toISOString().slice(0,10);
+  const pasados = eventosFotos.filter(e=>e.fecha && e.fecha<=hoy);   // eventosFotos viene del más reciente al más antiguo
+  return (pasados[0] || eventosFotos[eventosFotos.length-1] || {id:''}).id;
+}
+function fotoElegir(lista) {
+  const nuevas = [...lista].filter(f=>f.type.startsWith('image/') || /\.(jpe?g|png|webp|heic|heif)$/i.test(f.name));
+  const hueco = FOTO_MAX_TANDA - fotoPend.length;
+  if(nuevas.length > hueco) showToast(`Máximo ${FOTO_MAX_TANDA} fotos por tanda`, "warn");
+  nuevas.slice(0, Math.max(hueco,0)).forEach(f=>{
+    fotoPend.push({ file:f, prev:URL.createObjectURL(f), pie:'', estado:'pendiente', msg:'' });
+  });
+  render();
+}
+function fotoQuitar(i) {
+  if(fotoSubiendo || !fotoPend[i]) return;
+  URL.revokeObjectURL(fotoPend[i].prev);
+  fotoPend.splice(i,1);
+  render();
+}
+function fotoCargarImagen(file) {
+  return new Promise((ok, mal)=>{
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload  = ()=>{ URL.revokeObjectURL(url); ok(img); };
+    img.onerror = ()=>{ URL.revokeObjectURL(url); mal(new Error('FORMATO')); };
+    img.src = url;
+  });
+}
+function fotoLienzo(origen, anchoO, altoO, lado) {
+  const k = Math.min(1, lado / Math.max(anchoO, altoO));
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round(anchoO*k)); c.height = Math.max(1, Math.round(altoO*k));
+  const ctx = c.getContext('2d');
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(origen, 0, 0, c.width, c.height);
+  return c;
+}
+function fotoBlob(lienzo, calidad) {
+  return new Promise((ok, mal)=> lienzo.toBlob(b=> b ? ok(b) : mal(new Error('FORMATO')), 'image/jpeg', calidad));
+}
+// Devuelve la foto reducida para la web y su miniatura, ambas en JPEG
+async function fotoReducir(file) {
+  const img = await fotoCargarImagen(file);
+  const grandeC = fotoLienzo(img, img.naturalWidth, img.naturalHeight, FOTO_LADO);
+  let grande = await fotoBlob(grandeC, 0.82);
+  if(grande.size > FOTO_MAX_BYTES) grande = await fotoBlob(grandeC, 0.65);
+  if(grande.size > FOTO_MAX_BYTES) throw new Error('PESO');
+  const miniC = fotoLienzo(grandeC, grandeC.width, grandeC.height, FOTO_LADO_MINI);
+  const mini = await fotoBlob(miniC, 0.72);
+  return { grande, mini };
+}
+function fotoSello(n) {
+  const d = new Date(), p = v=>String(v).padStart(2,'0');
+  const azar = Math.random().toString(36).slice(2,6);
+  return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}_${n}${azar}`;
+}
+function fotoErrorLegible(e) {
+  const m = String(e && e.message || e);
+  if(m==='FORMATO') return 'Formato no compatible con este navegador. Guárdala como JPG y vuelve a intentarlo.';
+  if(m==='PESO' || m.startsWith('413')) return 'La foto pesa demasiado incluso reducida.';
+  if(m.startsWith('Failed to fetch') || m.startsWith('NetworkError') || m.startsWith('Load failed')) return 'Sin conexión. Vuelve a intentarlo.';
+  return 'No se ha podido publicar (' + m.slice(0,120) + ')';
+}
+async function fotoPublicar() {
+  if(fotoSubiendo) return;
+  const ev = eventoFotosPorId(fotoEvento);
+  if(!ev) { showToast("Elige el evento", "warn"); return; }
+  const pend = fotoPend.filter(p=>p.estado!=='ok');
+  if(!pend.length) { showToast("Elige primero las fotos", "warn"); return; }
+  fotoSubiendo = true;
+  let orden = ev.fotos.reduce((m,f)=>Math.max(m, f.orden||0), 0);
+  let bien = 0, n = 0;
+  for(const p of pend) {
+    n++;
+    try {
+      p.estado = 'proc'; p.msg = 'Preparando…'; render();
+      const { grande, mini } = await fotoReducir(p.file);
+      const base = `${ev.anio}/${ev.id}/${fotoSello(n)}`;
+      p.msg = 'Subiendo…'; render();
+      await sbSubirFoto(`${base}.jpg`, grande);
+      await sbSubirFoto(`${base}_mini.jpg`, mini);
+      await sbPost("fotos", { evento_id: ev.id, ruta: `${base}.jpg`, ruta_mini: `${base}_mini.jpg`,
+                              pie: p.pie.trim().slice(0,200) || null, orden: orden+1 });
+      orden++; bien++;
+      p.estado = 'ok'; p.msg = 'Publicada ✓';
+    } catch(e) {
+      p.estado = 'error'; p.msg = fotoErrorLegible(e);
+    }
+    render();
+  }
+  fotoSubiendo = false;
+  fotoPend.filter(p=>p.estado==='ok').forEach(p=>URL.revokeObjectURL(p.prev));
+  fotoPend = fotoPend.filter(p=>p.estado!=='ok');
+  const mal = pend.length - bien;
+  showToast(mal ? `${bien} publicada${bien!==1?'s':''}, ${mal} con error` : `${bien} foto${bien!==1?'s':''} publicada${bien!==1?'s':''} ✓`, mal ? "warn" : "ok");
+  await cargarFotos();
+}
+
+function fotoFormHTML() {
+  const total = eventosFotos.reduce((s,e)=>s+e.fotos.length, 0);
+  let h = `<div class="adm-jornada" style="margin-bottom:20px;">
+    <div class="adm-jornada-hdr">
+      <div>
+        <div class="adm-jornada-title">📷 Subir fotos</div>
+        <div class="adm-jornada-meta">Se publican al momento en Resultados y en la pestaña Fotos</div>
+      </div>
+      <div class="adm-badge">${fotosEstado==='ok' ? total+' foto'+(total!==1?'s':'') : '—'}</div>
+    </div>`;
+  if(fotosEstado!=='ok') {
+    h += `<div class="adm-empty">${fotosEstado==='cargando' ? 'Cargando eventos…'
+      : 'No se ha podido cargar la lista de eventos. <a style="color:#1B4332;font-weight:600;cursor:pointer;" onclick="fotosEstado=\'cargando\';render();cargarFotos()">Reintentar</a>'}</div></div>`;
+    return h;
+  }
+  if(!eventoFotosPorId(fotoEvento)) fotoEvento = fotoEventoPorDefecto();
+  const bloqueo = fotoSubiendo ? 'disabled' : '';
+  h += `<div class="foto-form">
+    <label for="foto-evento">Evento</label>
+    <select id="foto-evento" onchange="fotoEvento=this.value" ${bloqueo}>
+      ${eventosFotos.map(e=>`<option value="${esc(e.id)}"${e.id===fotoEvento?' selected':''}>${esc(e.nombre)}${e.fotos.length?` (${e.fotos.length})`:''}</option>`).join('')}
+    </select>
+    <input type="file" id="foto-input" accept="image/*" multiple style="display:none" onchange="fotoElegir(this.files); this.value='';"/>`;
+  fotoPend.forEach((p,i)=>{
+    h += `<div class="foto-pend">
+      <img src="${p.prev}" alt=""/>
+      <div class="foto-pend-info">
+        <div class="foto-pend-nom">${esc(p.file.name)} · ${(p.file.size/1048576).toFixed(1)} MB</div>
+        <input type="text" maxlength="200" placeholder="Pie de foto (opcional)" value="${esc(p.pie)}" oninput="fotoPend[${i}].pie=this.value" ${bloqueo}/>
+        ${p.msg?`<div class="foto-pend-est ${p.estado}">${esc(p.msg)}</div>`:''}
+      </div>
+      <button class="foto-quitar" onclick="fotoQuitar(${i})" aria-label="Quitar" ${bloqueo}>✕</button>
+    </div>`;
+  });
+  const quedan = fotoPend.filter(p=>p.estado!=='ok').length;
+  h += `<div class="foto-botones">
+      <button class="adm-btn adm-btn-excel" onclick="document.getElementById('foto-input').click()" ${bloqueo}>➕ Elegir fotos</button>
+      ${quedan?`<button class="adm-btn" style="background:#1B4332;color:#fff;${fotoSubiendo?'opacity:0.6;':''}" onclick="fotoPublicar()" ${bloqueo}>${fotoSubiendo?'Publicando…':`Publicar ${quedan} foto${quedan!==1?'s':''}`}</button>`:''}
+    </div>
+    <div class="foto-nota">Las fotos se reducen automáticamente antes de subirse, así que puedes elegirlas tal cual salen del móvil.
+      Para retirar una foto ya publicada, pídeselo a Teebot.</div>
+  </div></div>`;
+  return h;
 }
 
 // ═══════════════════════════════════════════════
@@ -615,6 +915,7 @@ function render() {
         <button class="toggle-btn${resTipo==='stableford'?' active':''}" onclick="setResTipo('stableford')">Stableford Hándicap</button>
         <button class="toggle-btn${resTipo==='scratch'?' active':''}" onclick="setResTipo('scratch')">Stableford Scratch</button>
       </div>`;
+      html+=tiraFotosHTML(eventoFotosPorId(CLAUSURA_FOTOS));
 
       if(conRes.length===0) {
         html+=`<div class="card"><div class="empty-state"><div style="font-size:32px;margin-bottom:8px">🏆</div>
@@ -712,6 +1013,7 @@ function render() {
     } else {
       const jornada=JORNADAS.find(j=>j.id===resVista);
       const lista=resultadosJornada(resVista,resTipo);
+      html+=tiraFotosHTML(eventoFotosDeJornada(resVista));
       html+=`<div class="card"><div class="card-header">
         <div class="card-title">${jornada?.id} · ${jornada?.campo} — ${resTipo==="stableford"?"Stableford Hándicap":"Stableford Scratch"}</div>
         <div class="card-sub">${jornada?.fecha}</div></div>`;
@@ -788,6 +1090,35 @@ function render() {
     html+=`<div style="padding:10px 0;font-size:11px;color:#ccc;text-align:center;">Barra: nivel de inscripción sobre 18 jugadores</div>`;
     c.innerHTML=html;
 
+  // ── FOTOS ────────────────────────────────────
+  } else if(tabActual==="fotos") {
+    let html='';
+    const conFotos=eventosFotos.filter(e=>e.fotos.length>0);
+    if(fotosEstado==="cargando") {
+      html+=`<div class="loading"><span class="spinner"></span>Cargando fotos...</div>`;
+    } else if(fotosEstado==="error") {
+      html+=`<div class="card"><div class="empty-state"><div style="font-size:32px;margin-bottom:8px">📷</div>
+        <div style="font-size:14px;font-weight:600;">No se han podido cargar las fotos</div>
+        <div style="font-size:12px;margin-top:8px;"><a style="color:#1B4332;font-weight:600;cursor:pointer;" onclick="fotosEstado='cargando';render();cargarFotos()">Reintentar</a></div></div></div>`;
+    } else if(conFotos.length===0) {
+      html+=`<div class="card"><div class="empty-state"><div style="font-size:32px;margin-bottom:8px">📷</div>
+        <div style="font-size:14px;font-weight:600;">Aún no hay fotos de esta temporada</div>
+        <div style="font-size:12px;margin-top:4px;">Aparecerán aquí tras cada jornada</div></div></div>`;
+    } else {
+      conFotos.forEach(ev=>{
+        html+=`<div class="foto-ev"><div class="foto-ev-cab">
+          <div><div class="foto-ev-nom">${esc(ev.nombre)}</div>${ev.meta?`<div class="foto-ev-meta">${esc(ev.meta)}</div>`:''}</div>
+          <div class="foto-ev-num">${ev.fotos.length} foto${ev.fotos.length!==1?'s':''}</div>
+        </div><div class="foto-ev-grid">`;
+        ev.fotos.forEach((f,i)=>{
+          html+=`<img loading="lazy" src="${esc(fotoURL(f,true))}" alt="${esc(f.pie||ev.nombre)}" onclick="lbAbrir('${esc(ev.id)}',${i})"/>`;
+        });
+        html+=`</div></div>`;
+      });
+    }
+    html+=`<a class="fotos-enlace" href="${GALERIA_URL}" target="_blank" rel="noopener">Galería histórica del club ›</a>`;
+    c.innerHTML=html;
+
   // ── ADMINISTRACIÓN ───────────────────────────
   } else if(tabActual==="administracion") {
     if(!admAuth) {
@@ -812,6 +1143,9 @@ function render() {
         💾 Exportar TODO (backup)
       </button>
     </div>`;
+
+    // ── Subida de fotos ──
+    html+=fotoFormHTML();
 
     // ── Gestión de cuotas anuales ──
     const sortedCuotas=[...JUGADORES].sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
@@ -919,15 +1253,22 @@ cargarDatos();
 
 // Refresco automático de inscripciones cada 30 segundos
 // para que todos los usuarios vean altas y bajas en tiempo real
+let repintarPendiente = false;
 setInterval(async () => {
   try {
     const [nuevas, nuevasEventos] = await Promise.all([
       sbGet("inscripciones", "select=jugador,jornada"),
       sbGet("inscripciones_eventos", "select=jugador,evento,comentario")
     ]);
+    // Solo se repinta si algo ha cambiado: así no parpadean las fotos ni se pierde lo que se esté escribiendo
+    const hayCambios = JSON.stringify(nuevas)!==JSON.stringify(inscripciones)
+                    || JSON.stringify(nuevasEventos)!==JSON.stringify(inscripcionesEventos);
     inscripciones = nuevas;
     inscripcionesEventos = nuevasEventos;
-    render();
+    const escribiendo = document.activeElement && document.activeElement.tagName==='INPUT'
+                     && ['text','password'].includes(document.activeElement.type);
+    if(hayCambios) repintarPendiente = true;
+    if(repintarPendiente && !fotoSubiendo && !escribiendo) { repintarPendiente = false; render(); }
   } catch(e) {
     // Silencioso — no interrumpir al usuario si falla el refresco
   }
