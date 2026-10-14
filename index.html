@@ -264,6 +264,12 @@
     .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--linea);
       border-top-color: var(--verde); border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    /* temporada cerrada */
+    #header-cierre { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; padding: 9px 16px; min-height: 40px;
+      background: rgba(255,255,255,0.12); color: #FFFFFF; border-radius: 999px; font-size: 14px; font-weight: 600; text-decoration: none; }
+    #header-cierre:hover { background: rgba(255,255,255,0.2); }
+    #header-cierre b { color: var(--oro); font-weight: 700; }
+    @media (max-width: 600px) { #header-cierre { font-size: 13px; padding: 9px 14px; gap: 6px; } }
     .pie { border-top: 1px solid var(--linea); }
     .pie .contenedor { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
       gap: 12px 32px; padding-top: 28px; padding-bottom: 28px; font-size: 14px; color: var(--gris); }
@@ -334,15 +340,15 @@
         <div id="header-sub">Temporada 2026</div>
         <div id="header-title">XXXIV Campeonato</div>
         <div id="header-dates">Liga de 10 jornadas · Ryder Cup · Campeonato de Clausura</div>
+        <a id="header-cierre" href="https://clubdegolfdetecnatom.github.io/temporada2026.html">Temporada cerrada <b>Ver el archivo completo ›</b></a>
       </div>
     </div>
     <div id="tabs" role="tablist">
-      <button class="tab-btn active"  onclick="showTab('inscripcion')">Inscripción</button>
-      <button class="tab-btn"        onclick="showTab('resultados')">Resultados</button>
+      <button class="tab-btn"        onclick="showTab('inscripcion')">Jornadas</button>
+      <button class="tab-btn active" onclick="showTab('resultados')">Resultados</button>
       <button class="tab-btn"        onclick="showTab('handicaps')">Hándicaps</button>
       <button class="tab-btn"        onclick="showTab('calendario')">Calendario</button>
       <button class="tab-btn"        onclick="showTab('fotos')">Fotos</button>
-      <button class="tab-btn"        onclick="showTab('administracion')">Administración</button>
     </div>
   </div>
 </div>
@@ -396,6 +402,7 @@ const SB_PUBLIC  = "https://peztstoiswhmlmpyhefl.supabase.co/storage/v1/object/p
 const SB_SUBIDA  = "https://peztstoiswhmlmpyhefl.supabase.co/storage/v1/object/fotos";
 const GALERIA_URL = "https://clubdegolfdetecnatom.github.io/galeria.html";
 const TEMPORADA  = 2026;
+const TEMPORADA_CERRADA = true; // cerrada el 13-10-2026: el portal queda solo de consulta
 const CLAUSURA_FOTOS = "clausura-salamanca"; // id del evento en eventos_fotos cuyas fotos acompañan a la clasificación de Clausura
 
 async function sbSubirFoto(ruta, blob) {
@@ -412,28 +419,28 @@ async function sbSubirFoto(ruta, blob) {
 // DATOS
 // ═══════════════════════════════════════════════
 const JUGADORES = [
-  { nombre:"Pablo López de Sillanes Asenjo",  hcp:20.2, sexo:"H", licencia:"CM81694407" },
-  { nombre:"Juan María Moreno Mellado",  hcp:36.0, sexo:"H", licencia:"CMA8821144" },
-  { nombre:"Diego Molpeceres Prieto",        hcp:29.0, sexo:"H", licencia:"CMA8959266" },
-  { nombre:"Miguel Ángel Fernández Sanz",  hcp:24.2, sexo:"H", licencia:"CM00156189" },
-  { nombre:"Pablo Teófilo León López",           hcp:32.8, sexo:"H", licencia:"CM81676084" },
-  { nombre:"Francisco Javier Guerra Saiz",      hcp:14.7, sexo:"H", licencia:"CM11755208" },
-  { nombre:"Jose Luis Delgado Criado",       hcp:20.7, sexo:"H", licencia:"CM00071132" },
-  { nombre:"José García Aycart",          hcp:36.0, sexo:"H", licencia:"CM00501750" },
-  { nombre:"Miguel Ángel Guillén Sáez",    hcp:24.1, sexo:"H", licencia:"CMB4138532" },
-  { nombre:"Juan Bros Torras",               hcp:25.2, sexo:"H", licencia:"CM60100758" },
-  { nombre:"José Emeterio Gutiérrez Elso", hcp:36.0, sexo:"H", licencia:"7752449132" },
-  { nombre:"Miguel Ángel Guerra Román",     hcp:19.1, sexo:"H", licencia:"AM00970558" },
-  { nombre:"Francisco Sánchez Álvarez",       hcp:28.7, sexo:"H", licencia:"CM00295236" },
-  { nombre:"Agustín Tejedor Velarde",         hcp:21.2, sexo:"H", licencia:"CM11187676" },
-  { nombre:"Fernando Ortega Pascual",         hcp:9.8, sexo:"H", licencia:"CM11147432" },
-  { nombre:"Tomás Adrián Recio Miranda",             hcp:30.0, sexo:"H", licencia:"CMA8957630" },
-  { nombre:"Carmen Muñoz Muñoz",           hcp:36.0, sexo:"M", licencia:"CMA8494289" },
-  { nombre:"Gloria Dolado Hernando",           hcp:27.1, sexo:"M", licencia:"CM11503196" },
-  { nombre:"Juan de la Cruz Martínez Robustillo", hcp:34.9, sexo:"H", licencia:"CM15473475" },
-  { nombre:"Fernando Diaz Marroquín",          hcp:29.9, sexo:"H", licencia:"CM07152606" },
-  { nombre:"Javier Antona Arias",              hcp:31.0, sexo:"H", licencia:"AM91053704" },
-  { nombre:"Manuel Cabañas Menendez",          hcp:36.0, sexo:"H", licencia:"CM41622023" },
+  { nombre:"Pablo López de Sillanes Asenjo",  hcp:20.2, sexo:"H", licencia:"" },
+  { nombre:"Juan María Moreno Mellado",  hcp:36.0, sexo:"H", licencia:"" },
+  { nombre:"Diego Molpeceres Prieto",        hcp:29.0, sexo:"H", licencia:"" },
+  { nombre:"Miguel Ángel Fernández Sanz",  hcp:24.2, sexo:"H", licencia:"" },
+  { nombre:"Pablo Teófilo León López",           hcp:32.8, sexo:"H", licencia:"" },
+  { nombre:"Francisco Javier Guerra Saiz",      hcp:14.7, sexo:"H", licencia:"" },
+  { nombre:"Jose Luis Delgado Criado",       hcp:20.7, sexo:"H", licencia:"" },
+  { nombre:"José García Aycart",          hcp:36.0, sexo:"H", licencia:"" },
+  { nombre:"Miguel Ángel Guillén Sáez",    hcp:24.1, sexo:"H", licencia:"" },
+  { nombre:"Juan Bros Torras",               hcp:25.2, sexo:"H", licencia:"" },
+  { nombre:"José Emeterio Gutiérrez Elso", hcp:36.0, sexo:"H", licencia:"" },
+  { nombre:"Miguel Ángel Guerra Román",     hcp:19.1, sexo:"H", licencia:"" },
+  { nombre:"Francisco Sánchez Álvarez",       hcp:28.7, sexo:"H", licencia:"" },
+  { nombre:"Agustín Tejedor Velarde",         hcp:21.2, sexo:"H", licencia:"" },
+  { nombre:"Fernando Ortega Pascual",         hcp:9.8, sexo:"H", licencia:"" },
+  { nombre:"Tomás Adrián Recio Miranda",             hcp:30.0, sexo:"H", licencia:"" },
+  { nombre:"Carmen Muñoz Muñoz",           hcp:36.0, sexo:"M", licencia:"" },
+  { nombre:"Gloria Dolado Hernando",           hcp:27.1, sexo:"M", licencia:"" },
+  { nombre:"Juan de la Cruz Martínez Robustillo", hcp:34.9, sexo:"H", licencia:"" },
+  { nombre:"Fernando Diaz Marroquín",          hcp:29.9, sexo:"H", licencia:"" },
+  { nombre:"Javier Antona Arias",              hcp:31.0, sexo:"H", licencia:"" },
+  { nombre:"Manuel Cabañas Menendez",          hcp:36.0, sexo:"H", licencia:"" },
 ];
 
 const JORNADAS = [
@@ -457,7 +464,7 @@ const EVENTOS = [
 ];
 
 const MEDALS = ["🥇","🥈","🥉"];
-const ADM_PWD = "Tecnatom";
+const ADM_PWD = null; // temporada cerrada: sin administración
 
 let inscripciones = []; // [{jugador, jornada}]
 let resultados    = []; // [{jornada, jugador, stableford, scratch}]
@@ -465,7 +472,7 @@ let cuotas         = []; // [{jugador, pagado}]
 let inscripcionesEventos = []; // [{jugador, evento, comentario}]
 let eventoFormAbierto = null; // id del evento cuyo formulario de comentario está abierto
 let jugadorActual = localStorage.getItem("tecnatom_jugador") || "";
-let tabActual     = "inscripcion";
+let tabActual     = "resultados";
 let jornadaDetalle= null;
 const CLAUSURA = [
   { id:"C1", campo:"Golf Villamayor",  fecha:"10/10/2026", iso:"2026-10-10", cr_h:69.2, slope_h:119, cr_m:69.0, slope_m:120, par:71 },
@@ -564,12 +571,14 @@ function setResVista(v) { resVista=v; render(); }
 function setResTipo(v)  { resTipo=v; render(); }
 function toggleDetalle(jid) { jornadaDetalle=jornadaDetalle===jid?null:jid; render(); }
 function admLogin() {
+  if(TEMPORADA_CERRADA) return;
   const v=document.getElementById('adm-pwd').value;
   if(v===ADM_PWD){ admAuth=true; render(); }
   else { document.getElementById('adm-error').style.display='block'; document.getElementById('adm-pwd').value=''; }
 }
 
 async function toggleInscripcion(jid) {
+  if(TEMPORADA_CERRADA){ showToast("La temporada 2026 está cerrada","warn"); return; }
   if(!jugadorActual){ showToast("Primero selecciona tu nombre","warn"); return; }
   const apuntado = estaApuntado(jugadorActual, jid);
   showToast(apuntado?"Procesando baja...":"Procesando inscripción...","info");
@@ -589,9 +598,10 @@ async function toggleInscripcion(jid) {
   }
 }
 
-function abrirFormEvento(eid) { eventoFormAbierto=eid; render(); }
+function abrirFormEvento(eid) { if(TEMPORADA_CERRADA){ showToast("La temporada 2026 está cerrada","warn"); return; } eventoFormAbierto=eid; render(); }
 
 async function toggleInscripcionEvento(eid, comentarioInputId) {
+  if(TEMPORADA_CERRADA){ showToast("La temporada 2026 está cerrada","warn"); return; }
   if(!jugadorActual){ showToast("Primero selecciona tu nombre","warn"); return; }
   const apuntado = estaApuntadoEvento(jugadorActual, eid);
   showToast(apuntado?"Procesando baja...":"Procesando inscripción...","info");
@@ -689,6 +699,7 @@ function fotoEventoPorDefecto() {
   return (pasados[0] || eventosFotos[eventosFotos.length-1] || {id:''}).id;
 }
 function fotoElegir(lista) {
+  if(TEMPORADA_CERRADA){ showToast("La temporada 2026 está cerrada","warn"); return; }
   const nuevas = [...lista].filter(f=>f.type.startsWith('image/') || /\.(jpe?g|png|webp|heic|heif)$/i.test(f.name));
   const hueco = FOTO_MAX_TANDA - fotoPend.length;
   if(nuevas.length > hueco) showToast(`Máximo ${FOTO_MAX_TANDA} fotos por tanda`, "warn");
@@ -748,6 +759,7 @@ function fotoErrorLegible(e) {
   return 'No se ha podido publicar (' + m.slice(0,120) + ')';
 }
 async function fotoPublicar() {
+  if(TEMPORADA_CERRADA){ showToast("La temporada 2026 está cerrada","warn"); return; }
   if(fotoSubiendo) return;
   const ev = eventoFotosPorId(fotoEvento);
   if(!ev) { showToast("Elige el evento", "warn"); return; }
@@ -932,6 +944,7 @@ function estaPagado(nombre) {
 }
 
 async function toggleCuota(nombre, checkbox) {
+  if(TEMPORADA_CERRADA){ checkbox.checked = !checkbox.checked; showToast("La temporada 2026 está cerrada","warn"); return; }
   const nuevoEstado = checkbox.checked;
   checkbox.disabled = true;
   try {
@@ -1008,6 +1021,7 @@ function render() {
       } else {
         boton='';
       }
+      if(TEMPORADA_CERRADA) boton="";
       const miComentario=ap?comentarioEvento(jugadorActual,ev.id):null;
       html+=`<div class="jornada-card${ap?' apuntado':''}">
         <div class="jornada-row">
